@@ -1,7 +1,10 @@
 
+substitutions:
+  device: watering
+       
 esphome:
-  name: bennoesp32
-  friendly_name: BennoESP32
+  name: $device
+  friendly_name: Benno_$device
 
 esp32:
   board: esp32dev
@@ -68,6 +71,7 @@ mqtt:
     mRGunUHBcnWEvgJBQl9nJEiU0Zsnvgc/ubhPgXRR4Xq37Z0j4r7g1SgEEzwxA57d
     emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
     -----END CERTIFICATE-----
+
   
 
 text_sensor:
@@ -75,25 +79,25 @@ text_sensor:
     name: Uptime Human Readable
     id: uptime_human
     icon: mdi:clock-start
-    state_topic: watering/uptime_text
+    state_topic: $device/uptime_text
   - platform: wifi_info
     ip_address:
       name: ESP IP Address
-      state_topic: watering/ip
+      state_topic: $device/ip
     ssid:
       name: ESP Connected SSID
-      state_topic: watering/ssid
+      state_topic: $device/ssid
     bssid:
       name: ESP Connected BSSID
-      state_topic: watering/bssid
+      state_topic: $device/bssid
     mac_address:
       name: ESP Mac Wifi Address
-      state_topic: watering/mac
+      state_topic: $device/mac
     scan_results:
       name: ESP Latest Scan Results
     dns_address:
       name: ESP DNS Address
-      state_topic: watering/dns
+      state_topic: $device/dns
 
 sensor:
   # Example configuration entry with 2 sensors and filter
@@ -102,13 +106,14 @@ sensor:
     id: wifi_signal_db
     update_interval: 60s
     entity_category: "diagnostic"
-    state_topic: watering/wifi_signal_db
+    state_topic: $device/wifi_signal_db
 
   - platform: adc
-    pin: A0
+    pin: GPIO39
     name: "Soil Moisture"
     update_interval: 600s
     unit_of_measurement: "%"
+    state_topic: $device/soil_moisture
     filters:
     - median:
         window_size: 7
@@ -123,7 +128,11 @@ sensor:
 switch:
   - platform: gpio
     name: "Relay"
-    pin: 2
+    id: waterpump1   
+    pin: GPIO23
+    state_topic: $device/waterpump
+
+
 
 
 
