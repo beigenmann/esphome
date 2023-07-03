@@ -104,16 +104,17 @@ sensor:
   - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
     name: "WiFi Signal dB"
     id: wifi_signal_db
-    update_interval: 60s
+    update_interval: 3600s
     entity_category: "diagnostic"
     state_topic: $device/wifi_signal_db
 
   - platform: adc
     pin: GPIO39
     name: "Soil Moisture"
-    update_interval: 600s
+    update_interval: 6s
     unit_of_measurement: "%"
-    state_topic: $device/soil_moisture
+    id: soil_moisture1   
+    state_topic: $device/soil_moisture1
     filters:
     - median:
         window_size: 7
@@ -125,15 +126,40 @@ sensor:
     - lambda: if (x < 1) return 0; else return (x);
     accuracy_decimals: 0
 
+# Example configuration entry
+number:
+  - platform: template
+    name: "Volume"
+    id: volume
+    initial_value: 4
+    optimistic: true
+    min_value: 0
+    max_value: 100
+    step: 1
+    state_topic: $device/volume
+    command_topic: $device/volume/command
+
 switch:
   - platform: gpio
-    name: "Relay"
+    name: "Waterpump 1"
     id: waterpump1   
     pin: GPIO23
-    state_topic: $device/waterpump
+    on_turn_on:
+    - script.execute:
+        id: toggle_it
+        delay_ms: 1000
+    state_topic: $device/waterpump1
+    command_topic: $device/waterpump_1/command
 
-
-
+script:
+  - id: toggle_it
+    parameters:
+      delay_ms: int
+    mode: restart
+    then:
+      - switch.turn_on: waterpump1
+      - delay: !lambda return delay_ms;
+      - switch.turn_off: waterpump1
 
 
  
