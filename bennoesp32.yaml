@@ -13,6 +13,7 @@ esp32:
 
 # Enable logging
 logger:
+  level: DEBUG #ERROR  NONE
 
 # Enable Home Assistant API
 #api:
@@ -30,7 +31,6 @@ wifi:
   ap:
     ssid: "Bennoesp32 Fallback Hotspot"
     password: "1BSeHqsrQnQi"
-
 
 mqtt:
   broker: !secret mqtt_ip
@@ -72,33 +72,6 @@ mqtt:
     emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
     -----END CERTIFICATE-----
 
-  
-
-text_sensor:
-  - platform: template
-    name: Uptime Human Readable
-    id: uptime_human
-    icon: mdi:clock-start
-    state_topic: $device/uptime_text
-  - platform: wifi_info
-    ip_address:
-      name: ESP IP Address
-      state_topic: $device/ip
-    ssid:
-      name: ESP Connected SSID
-      state_topic: $device/ssid
-    bssid:
-      name: ESP Connected BSSID
-      state_topic: $device/bssid
-    mac_address:
-      name: ESP Mac Wifi Address
-      state_topic: $device/mac
-    scan_results:
-      name: ESP Latest Scan Results
-    dns_address:
-      name: ESP DNS Address
-      state_topic: $device/dns
-
 sensor:
   # Example configuration entry with 2 sensors and filter
   - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
@@ -106,7 +79,7 @@ sensor:
     id: wifi_signal_db
     update_interval: 3600s
     entity_category: "diagnostic"
-    state_topic: $device/wifi_signal_db
+#    state_topic: $device/wifi_signal_db
 
   - platform: adc
     pin: GPIO39
@@ -114,7 +87,7 @@ sensor:
     update_interval: 6s
     unit_of_measurement: "%"
     id: soil_moisture1   
-    state_topic: $device/soil_moisture1
+ #   state_topic: $device/soil_moisture1
     filters:
     - median:
         window_size: 7
@@ -126,40 +99,26 @@ sensor:
     - lambda: if (x < 1) return 0; else return (x);
     accuracy_decimals: 0
 
-# Example configuration entry
-number:
-  - platform: template
-    name: "Volume"
-    id: volume
-    initial_value: 4
-    optimistic: true
-    min_value: 0
-    max_value: 100
-    step: 1
-    state_topic: $device/volume
-    command_topic: $device/volume/command
+  - platform: mqtt_subscribe
+    id: waterpump_time1
+    topic:  $device/waterpump1
+    on_value:
+      then:
+        - logger.log: "waterpump 1"
+        - switch.turn_on: waterpump1
+        - delay: !lambda "return  id(waterpump_time1).state * 1000 ;"
+        - switch.turn_off: waterpump1
+
 
 switch:
   - platform: gpio
     name: "Waterpump 1"
     id: waterpump1   
     pin: GPIO23
-    on_turn_on:
-    - script.execute:
-        id: toggle_it
-        delay_ms: 1000
-    state_topic: $device/waterpump1
-    command_topic: $device/waterpump_1/command
+    state_topic: $device/waterpump_state_1
 
-script:
-  - id: toggle_it
-    parameters:
-      delay_ms: int
-    mode: restart
-    then:
-      - switch.turn_on: waterpump1
-      - delay: !lambda return delay_ms;
-      - switch.turn_off: waterpump1
+      
+
 
 
  
