@@ -1,0 +1,101 @@
+
+substitutions:
+  device: watering
+       
+esphome:
+  name: $device
+  friendly_name: Benno_$device
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+#api:
+#  encryption:
+#    key: "b1OonrUr1YaxOf5Wz0FR3n3oGJCcH1Vb8Cab7+5hCgQ="
+
+ota:
+  password: "ca6cddb3e967b0bddc1d9ac655f86969"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Bennoesp32 Fallback Hotspot"
+    password: "1BSeHqsrQnQi"
+
+
+sensor:
+  # Example configuration entry with 2 sensors and filter
+  - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
+    name: "WiFi Signal dB"
+    id: wifi_signal_db
+    update_interval: 3600s
+    entity_category: "diagnostic"
+#    state_topic: $device/wifi_signal_db
+
+  - platform: adc
+    pin: GPIO39
+    name: "Soil Moisture"
+    update_interval: 6s
+    unit_of_measurement: "%"
+    id: soil_moisture1   
+ #   state_topic: $device/soil_moisture1
+    filters:
+    - median:
+        window_size: 7
+        send_every: 4
+        send_first_at: 1
+    - calibrate_linear:
+        - 0.85 -> 0.00
+        - 0.44 -> 100.00
+    - lambda: if (x < 1) return 0; else return (x);
+    accuracy_decimals: 0
+
+number:
+  - platform: template
+    name: "Volume 1"
+    id: volume_1
+    initial_value: 5
+    optimistic: true
+    min_value: 0
+    max_value: 100
+    step: 1
+
+switch:
+  - platform: gpio
+    name: "Waterpump 1"
+    id: waterpump1   
+    pin: GPIO23
+    on_turn_on:
+      - delay: !lambda "return  id(volume_1).state * 1000 ;"
+        
+      - switch.turn_off: waterpump1
+
+script:
+  - id: toggle_it
+    parameters:
+      delay_ms: int
+    mode: restart
+    then:
+      - switch.turn_on: waterpump1
+      - delay: !lambda return delay_ms;
+      - switch.turn_off: waterpump1
+      
+# Example configuration entry
+web_server:
+  port: 80
+  version: 1
+
+
+ 
+ 
+
+  
