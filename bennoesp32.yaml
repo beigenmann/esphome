@@ -96,6 +96,10 @@ deep_sleep:
   id: deep_sleep_control
   run_duration: 1min
   sleep_duration: 60min
+  
+time:
+  - platform: sntp
+    id: sntp_time
 
 sensor:
   # Example configuration entry with 2 sensors and filter
