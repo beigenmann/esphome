@@ -39,6 +39,25 @@ mqtt:
   port: !secret mqtt_port
   skip_cert_cn_check: false
   idf_send_async: false
+  on_message:
+    - topic: $device/ota_mode
+      qos: 0                                          #1
+      payload: 'on'
+      then:
+        - logger.log:
+            format: 'MQTT Admin: disable deep sleep'
+            level: ERROR
+        - deep_sleep.prevent: deep_sleep_control
+    - topic: $device/sleep_mode
+      qos: 0                                          #1
+      payload: 'off'
+      then:
+        - logger.log:
+            format: 'MQTT Admin: entering deep sleep'
+            level: ERROR
+        - deep_sleep.enter: deep_sleep_control
+
+
   certificate_authority: |
     -----BEGIN CERTIFICATE-----
     MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw
@@ -71,6 +90,12 @@ mqtt:
     mRGunUHBcnWEvgJBQl9nJEiU0Zsnvgc/ubhPgXRR4Xq37Z0j4r7g1SgEEzwxA57d
     emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
     -----END CERTIFICATE-----
+
+
+deep_sleep:
+  id: deep_sleep_control
+  run_duration: 1min
+  sleep_duration: 60min
 
 sensor:
   # Example configuration entry with 2 sensors and filter
