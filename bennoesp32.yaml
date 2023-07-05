@@ -1,6 +1,6 @@
 
 substitutions:
-  device: watering
+  device: watering1
        
 esphome:
   name: $device
@@ -13,7 +13,7 @@ esp32:
 
 # Enable logging
 logger:
-  level: DEBUG #ERROR  NONE
+  level: NONE #ERROR  NONE DEBUG
 
 # Enable Home Assistant API
 #api:
@@ -95,8 +95,8 @@ mqtt:
 deep_sleep:
   id: deep_sleep_control
   run_duration: 1min
-  sleep_duration: 60min
-  
+  sleep_duration: 1min
+
 time:
   - platform: sntp
     id: sntp_time
@@ -116,7 +116,7 @@ sensor:
     update_interval: 6s
     unit_of_measurement: "%"
     id: soil_moisture1   
- #   state_topic: $device/soil_moisture1
+    state_topic: $device/soil_moisture1
     filters:
     - median:
         window_size: 7
