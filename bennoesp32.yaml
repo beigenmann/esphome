@@ -95,7 +95,7 @@ mqtt:
 deep_sleep:
   id: deep_sleep_control
   run_duration: 1min
-  sleep_duration: 1min
+  sleep_duration: 30min
 
 time:
   - platform: sntp
@@ -111,12 +111,66 @@ sensor:
 #    state_topic: $device/wifi_signal_db
 
   - platform: adc
-    pin: GPIO39
-    name: "Soil Moisture"
-    update_interval: 6s
+    pin: GPIO32
+    name: "Soil Moisture 1"
+#    update_interval: 6s
     unit_of_measurement: "%"
     id: soil_moisture1   
     state_topic: $device/soil_moisture1
+    filters:
+    - median:
+        window_size: 7
+        send_every: 4
+        send_first_at: 1
+    - calibrate_linear:
+        - 0.85 -> 0.00
+        - 0.44 -> 100.00
+    - lambda: if (x < 1) return 0; else return (x);
+    accuracy_decimals: 0
+
+  - platform: adc
+    pin: GPIO33
+    name: "Soil Moisture 2"
+#    update_interval: 6s
+    unit_of_measurement: "%"
+    id: soil_moisture2   
+    state_topic: $device/soil_moisture2
+    filters:
+    - median:
+        window_size: 7
+        send_every: 4
+        send_first_at: 1
+    - calibrate_linear:
+        - 0.85 -> 0.00
+        - 0.44 -> 100.00
+    - lambda: if (x < 1) return 0; else return (x);
+    accuracy_decimals: 0
+
+  - platform: adc
+    pin: GPIO34
+    name: "Soil Moisture 3"
+#    update_interval: 6s
+    unit_of_measurement: "%"
+    id: soil_moisture3   
+    state_topic: $device/soil_moisture3
+    filters:
+    - median:
+        window_size: 7
+        send_every: 4
+        send_first_at: 1
+    - calibrate_linear:
+        - 0.85 -> 0.00
+        - 0.44 -> 100.00
+    - lambda: if (x < 1) return 0; else return (x);
+    accuracy_decimals: 0
+  
+  - platform: adc
+    pin: GPIO35
+    name: "Soil Moisture 4"
+#    update_interval: 6s
+    unit_of_measurement: "%"
+    id: soil_moisture4   
+    state_topic: $device/soil_moisture4
     filters:
     - median:
         window_size: 7
@@ -137,13 +191,16 @@ sensor:
         - switch.turn_on: waterpump1
         - delay: !lambda "return  id(waterpump_time1).state * 1000 ;"
         - switch.turn_off: waterpump1
+        - delay: 2s 
+        - deep_sleep.enter: 
+            sleep_duration: 1min
 
 
 switch:
   - platform: gpio
     name: "Waterpump 1"
     id: waterpump1   
-    pin: GPIO23
+    pin: GPIO22
     state_topic: $device/waterpump_state_1
 
       
