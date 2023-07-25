@@ -48,7 +48,7 @@ mqtt:
         - logger.log:
             format: 'MQTT Admin: disable deep sleep'
             level: ERROR
- #       - deep_sleep.prevent: deep_sleep_control
+#        - deep_sleep.prevent: deep_sleep_control
     - topic: $device/sleep_mode
       qos: 0                                          #1
       payload: 'off'
@@ -93,10 +93,10 @@ mqtt:
     -----END CERTIFICATE-----
 
 
-#deep_sleep:
-#  id: deep_sleep_control
-#  run_duration: 1min
-#  sleep_duration: 30min
+deep_sleep:
+  id: deep_sleep_control
+  run_duration: 2min
+  sleep_duration: 3min
 
 time:
   - platform: sntp
@@ -110,15 +110,17 @@ sensor:
     update_interval: 3600s
     entity_category: "diagnostic"
 #    state_topic: $device/wifi_signal_db
+
   - platform: adc
     pin: GPIO32
     name: "Soil Moisture 1"
-#    update_interval: 6s
     unit_of_measurement: "%"
     id: soil_moisture1   
-    update_interval: 1s
+    update_interval: 10min
     state_topic: $device/soil_moisture1
     attenuation: 11db
+    retain: true
+ #   expire_after: 10 minutes
     filters:
     - median:
         window_size: 7
@@ -133,14 +135,14 @@ sensor:
   - platform: adc
     pin: GPIO33
     name: "Soil Moisture 2"
-    update_interval: 1s
+    update_interval: 10min
 #    update_interval: 6s
     unit_of_measurement: "%"
     id: soil_moisture2   
     state_topic: $device/soil_moisture2
     attenuation: 11db
     retain: true
-    expire_after: 120 minutes
+#    expire_after: 10 minutes
     filters:
     - median:
         window_size: 7
@@ -155,14 +157,13 @@ sensor:
   - platform: adc
     pin: GPIO34
     name: "Soil Moisture 3"
-    update_interval: 1s
-#    update_interval: 6s
+    update_interval: 10min
     unit_of_measurement: "%"
     id: soil_moisture3   
     state_topic: $device/soil_moisture3
     attenuation: 11db
     retain: true
-    expire_after: 120 minutes
+ #   expire_after: 10 minutes
     filters:
     - median:
         window_size: 7
@@ -177,14 +178,13 @@ sensor:
   - platform: adc
     pin: GPIO35
     name: "Soil Moisture 4"
-    update_interval: 1s
-#    update_interval: 6s
+    update_interval: 10min
     unit_of_measurement: "%"
     id: soil_moisture4   
     state_topic: $device/soil_moisture4
     attenuation: 11db
     retain: true
-    expire_after: 120 minutes
+ #   expire_after: 10 minutes
     filters:
     - median:
         window_size: 7
@@ -198,8 +198,9 @@ sensor:
 
   - platform: mqtt_subscribe
     id: waterpump_time1
-    retain: true
-    expire_after: 120 minutes
+ #   retain: true
+#    qos: 2
+#    expire_after: 120 minutes
     topic:  $device/waterpump1
     on_value:
       then:
@@ -217,7 +218,7 @@ switch:
     name: "Waterpump 1"
     id: waterpump1   
     pin: GPIO22
-    retain: true
+#    retain: true
     state_topic: $device/waterpump_state_1
 
       
