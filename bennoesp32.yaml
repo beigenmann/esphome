@@ -39,6 +39,7 @@ mqtt:
   port: !secret mqtt_port
   skip_cert_cn_check: false
   idf_send_async: false
+  
   on_message:
     - topic: $device/ota_mode
       qos: 0                                          #1
@@ -138,6 +139,8 @@ sensor:
     id: soil_moisture2   
     state_topic: $device/soil_moisture2
     attenuation: 11db
+    retain: true
+    expire_after: 120 minutes
     filters:
     - median:
         window_size: 7
@@ -158,6 +161,8 @@ sensor:
     id: soil_moisture3   
     state_topic: $device/soil_moisture3
     attenuation: 11db
+    retain: true
+    expire_after: 120 minutes
     filters:
     - median:
         window_size: 7
@@ -178,6 +183,8 @@ sensor:
     id: soil_moisture4   
     state_topic: $device/soil_moisture4
     attenuation: 11db
+    retain: true
+    expire_after: 120 minutes
     filters:
     - median:
         window_size: 7
@@ -191,6 +198,8 @@ sensor:
 
   - platform: mqtt_subscribe
     id: waterpump_time1
+    retain: true
+    expire_after: 120 minutes
     topic:  $device/waterpump1
     on_value:
       then:
@@ -208,6 +217,7 @@ switch:
     name: "Waterpump 1"
     id: waterpump1   
     pin: GPIO22
+    retain: true
     state_topic: $device/waterpump_state_1
 
       
