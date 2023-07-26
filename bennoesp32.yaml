@@ -140,13 +140,12 @@ sensor:
     pin: GPIO33
     name: "Soil Moisture 2"
     update_interval: $update_interval_moisture
-#    update_interval: 6s
     unit_of_measurement: "%"
     id: soil_moisture2   
     state_topic: $device/soil_moisture2
     attenuation: 11db
     retain: true
-#    expire_after: 10 minutes
+    expire_after: $expire_after_moisture
     filters:
     - median:
         window_size: 7
@@ -167,7 +166,7 @@ sensor:
     state_topic: $device/soil_moisture3
     attenuation: 11db
     retain: true
- #   expire_after: 10 minutes
+    expire_after: $expire_after_moisture
     filters:
     - median:
         window_size: 7
@@ -188,7 +187,7 @@ sensor:
     state_topic: $device/soil_moisture4
     attenuation: 11db
     retain: true
- #   expire_after: 10 minutes
+    expire_after: $expire_after_moisture
     filters:
     - median:
         window_size: 7
