@@ -1,6 +1,9 @@
 
 substitutions:
   device: watering1
+  sleep_duration: 60min
+  run_duration: 1min
+  update_interval_moistersenor : 60 min
        
 esphome:
   name: $device
@@ -95,8 +98,8 @@ mqtt:
 
 deep_sleep:
   id: deep_sleep_control
-  run_duration: 2min
-  sleep_duration: 3min
+  run_duration: $run_duration
+  sleep_duration: $sleep_duration
 
 time:
   - platform: sntp
@@ -116,7 +119,7 @@ sensor:
     name: "Soil Moisture 1"
     unit_of_measurement: "%"
     id: soil_moisture1   
-    update_interval: 10min
+    update_interval: $update_interval_moistersenor
     state_topic: $device/soil_moisture1
     attenuation: 11db
     retain: true
@@ -135,7 +138,7 @@ sensor:
   - platform: adc
     pin: GPIO33
     name: "Soil Moisture 2"
-    update_interval: 10min
+    update_interval: $update_interval_moistersenor
 #    update_interval: 6s
     unit_of_measurement: "%"
     id: soil_moisture2   
@@ -157,7 +160,7 @@ sensor:
   - platform: adc
     pin: GPIO34
     name: "Soil Moisture 3"
-    update_interval: 10min
+    update_interval: $update_interval_moistersenor
     unit_of_measurement: "%"
     id: soil_moisture3   
     state_topic: $device/soil_moisture3
@@ -178,7 +181,7 @@ sensor:
   - platform: adc
     pin: GPIO35
     name: "Soil Moisture 4"
-    update_interval: 10min
+    update_interval: $update_interval_moistersenor
     unit_of_measurement: "%"
     id: soil_moisture4   
     state_topic: $device/soil_moisture4
@@ -198,9 +201,6 @@ sensor:
 
   - platform: mqtt_subscribe
     id: waterpump_time1
- #   retain: true
-#    qos: 2
-#    expire_after: 120 minutes
     topic:  $device/waterpump1
     on_value:
       then:
