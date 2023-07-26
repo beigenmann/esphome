@@ -208,18 +208,68 @@ sensor:
         - switch.turn_on: waterpump1
         - delay: !lambda "return  id(waterpump_time1).state * 1000 ;"
         - switch.turn_off: waterpump1
-        - delay: 2s 
-#        - deep_sleep.enter: 
-#            sleep_duration: 1min
+
+  - platform: mqtt_subscribe
+    id: waterpump_time2
+    topic:  $device/waterpump2
+    on_value:
+      then:
+        - logger.log: "waterpump 2"
+        - switch.turn_on: waterpump2
+        - delay: !lambda "return  id(waterpump_time2).state * 1000 ;"
+        - switch.turn_off: waterpump2
+
+  - platform: mqtt_subscribe
+    id: waterpump_time3
+    topic:  $device/waterpump3
+    on_value:
+      then:
+        - logger.log: "waterpump 3"
+        - switch.turn_on: waterpump3
+        - delay: !lambda "return  id(waterpump_time3).state * 1000 ;"
+        - switch.turn_off: waterpump3
+
+  - platform: mqtt_subscribe
+    id: waterpump_time4
+    topic:  $device/waterpump4
+    on_value:
+      then:
+        - logger.log: "waterpump 4"
+        - switch.turn_on: waterpump4
+        - delay: !lambda "return  id(waterpump_time4).state * 1000 ;"
+        - switch.turn_off: waterpump4
 
 
 switch:
   - platform: gpio
     name: "Waterpump 1"
     id: waterpump1   
-    pin: GPIO22
+    pin: GPIO25
 #    retain: true
     state_topic: $device/waterpump_state_1
+
+  - platform: gpio
+    name: "Waterpump 2"
+    id: waterpump2   
+    pin: GPIO26
+#    retain: true
+    state_topic: $device/waterpump_state_2
+
+  - platform: gpio
+    name: "Waterpump 3"
+    id: waterpump3   
+    pin: GPIO27
+#    retain: true
+    state_topic: $device/waterpump_state_3
+  
+  - platform: gpio
+    name: "Waterpump 4"
+    id: waterpump4   
+    pin: GPIO14
+#    retain: true
+    state_topic: $device/waterpump_state_4
+
+
 
       
 
