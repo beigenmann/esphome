@@ -1,9 +1,10 @@
 
 substitutions:
   device: watering1
-  sleep_duration: 60min
+  sleep_duration: 1min
   run_duration: 1min
-  update_interval_moistersenor : 60 min
+  update_interval_moisture  : 60 min
+  expire_after_moisture : 60 min 
        
 esphome:
   name: $device
@@ -119,11 +120,11 @@ sensor:
     name: "Soil Moisture 1"
     unit_of_measurement: "%"
     id: soil_moisture1   
-    update_interval: $update_interval_moistersenor
+    update_interval: $update_interval_moisture
     state_topic: $device/soil_moisture1
     attenuation: 11db
     retain: true
- #   expire_after: 10 minutes
+    expire_after: $expire_after_moisture
     filters:
     - median:
         window_size: 7
@@ -138,7 +139,7 @@ sensor:
   - platform: adc
     pin: GPIO33
     name: "Soil Moisture 2"
-    update_interval: $update_interval_moistersenor
+    update_interval: $update_interval_moisture
 #    update_interval: 6s
     unit_of_measurement: "%"
     id: soil_moisture2   
@@ -160,7 +161,7 @@ sensor:
   - platform: adc
     pin: GPIO34
     name: "Soil Moisture 3"
-    update_interval: $update_interval_moistersenor
+    update_interval: $update_interval_moisture
     unit_of_measurement: "%"
     id: soil_moisture3   
     state_topic: $device/soil_moisture3
@@ -181,7 +182,7 @@ sensor:
   - platform: adc
     pin: GPIO35
     name: "Soil Moisture 4"
-    update_interval: $update_interval_moistersenor
+    update_interval: $update_interval_moisture
     unit_of_measurement: "%"
     id: soil_moisture4   
     state_topic: $device/soil_moisture4
